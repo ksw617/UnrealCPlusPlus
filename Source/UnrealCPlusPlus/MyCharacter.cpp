@@ -18,20 +18,21 @@ AMyCharacter::AMyCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.f, -90.f, 0.f));
 	}
 
-	//springArm이랑 Camera 만들기
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("FollowSpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 
-	//SpringArm은 Root 아래에 배치
 	SpringArm->SetupAttachment(RootComponent);
-	//Camera를 SpringArm 아래에 배치
 	Camera->SetupAttachment(SpringArm);
 
-	//SpringArm 거리를 400으로 설정
 	SpringArm->TargetArmLength = 400.f;
-	//SpringArm의 위치와 회전을 각각 z에 100.f, Pitch에 -25.f
 	SpringArm->SetRelativeLocationAndRotation(FVector(0.f, 0.f, 100.f), FRotator(-25.f, 0.f, 0.f));
 
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AI(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/ABP_Character.ABP_Character_C'"));
+
+	if (AI.Succeeded())
+	{
+		GetMesh()->SetAnimClass(AI.Class);
+	}
 }
 
 void AMyCharacter::BeginPlay()
@@ -50,6 +51,18 @@ void AMyCharacter::Tick(float DeltaTime)
 void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAxis(TEXT("MoveForwardBackward"), this, &AMyCharacter::KeyUpDown);
+	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &AMyCharacter::KeyLeftRight);
 
+}
+
+void AMyCharacter::KeyUpDown(float value)
+{
+	AddMovementInput(GetActorForwardVector(), value, false);
+}
+
+void AMyCharacter::KeyLeftRight(float value)
+{
+	AddMovementInput(GetActorRightVector(), value, false);
 }
 

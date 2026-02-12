@@ -15,6 +15,9 @@ private:
 	class USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
+private:
+	UPROPERTY(VisibleAnywhere)
+	class UAnimInstance* AnimInstance;
 
 public:
 	AMyCharacter();
@@ -26,4 +29,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	void KeyUpDown(float value);
+	void KeyLeftRight(float value);
 };
